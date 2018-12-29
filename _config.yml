@@ -80,4 +80,4 @@ theme: next
 deploy:
   type: git
   repo: https://github.com/lx0427/lx0427.github.io.git
-  branch: gh-pages
+  branch: master
