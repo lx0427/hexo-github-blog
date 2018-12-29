@@ -3,11 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle:
-description:
-author: John Doe
-language:
+title: L.F.B's Blog
+subtitle: 一个沉淀知识的地方
+description: 世界很大，什么都得试试
+keywords: L.F.B Blog IT Javascript Web Developer
+author: Little Flying Bears
+language: zh-Hans
 timezone:
 
 # URL
