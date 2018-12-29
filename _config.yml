@@ -82,6 +82,9 @@ deploy:
   repo: https://github.com/lx0427/lx0427.github.io.git
   branch: master
 
+social:
+  GitHub: https://github.com/lx0427 || github
+
 search:
   path: search.xml
   field: post
