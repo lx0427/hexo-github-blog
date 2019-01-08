@@ -6,8 +6,8 @@
     "version": "3.8.0"
   },
   "scripts": {
-    "serve": "hexo s --port 3030",
-    "dev": "hexo clean && hexo g && hexo s --port 3030",
+    "dev": "hexo s --port 3030",
+    "serve": "hexo clean && hexo g && hexo s --port 3030",
     "build": "hexo clean && hexo g && hexo d"
   },
   "dependencies": {
