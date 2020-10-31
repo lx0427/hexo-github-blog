@@ -103,7 +103,9 @@ theme: hexo-theme-next
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: ''
+  type: git
+  repo: https://github.com/lx0427/lx0427.github.io.git
+  branch: gh-pages
 
 search:
   path: search.xml
