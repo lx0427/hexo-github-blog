@@ -9,7 +9,7 @@ description: 世界很大，什么都得试试
 keywords: L.F.B Blog IT Javascript Web Developer
 author: Little Flying Bears
 language: zh-Hans
-timezone:
+timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
