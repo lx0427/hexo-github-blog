@@ -124,6 +124,7 @@ local_search:
 - [登录leancloud](https://leancloud.cn/dashboard/applist.html#/apps)
 - appId+appKey: 应用-设置-应用keys
 - 用户评论数据: 存储-结构化数据-comment
+- serverURLs: [访问官网](https://valine.js.org/)控制台network查看Comment接口域名
 
 ```yml
 valine:
