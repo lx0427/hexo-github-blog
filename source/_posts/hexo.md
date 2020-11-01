@@ -58,6 +58,7 @@ menu:
   about: /about/ || fa fa-user
   tags: /tags/ || fa fa-tags
   categories: /categories/ || fa fa-th
+  archives: /archives/ || fa fa-archive
 
 # 复制代码块
 codeblock:
@@ -82,6 +83,12 @@ reward:
   alipay: /images/alipay.jpg
   #paypal: /images/paypal.png
   #bitcoin: /images/bitcoin.png
+```
+
+### about
+
+```bash
+hexo new page about
 ```
 
 ### tags
