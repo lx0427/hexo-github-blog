@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle: ''
-description: ''
-keywords:
-author: John Doe
+title: Little Flying Bears
+subtitle: 一个沉淀知识的地方
+description: 世界很大，什么都得试试
+keywords: js node 前端开发工程师
+author: lx0427
 language: zh-CN
 timezone: ''
 
