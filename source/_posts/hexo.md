@@ -59,6 +59,17 @@ menu:
   tags: /tags/ || fa fa-tags
   categories: /categories/ || fa fa-th
 
+# 复制代码块
+codeblock:
+  copy_button:
+    enable: false
+  # Available values: default | flat | mac
+  style:
+
+# Sidebar Social Links
+social:
+  GitHub: https://github.com/lx0427 || fab fa-github
+  
 # 打赏
 reward_settings:
   # If true, a donate button will be displayed in every article by default.
@@ -71,13 +82,6 @@ reward:
   alipay: /images/alipay.jpg
   #paypal: /images/paypal.png
   #bitcoin: /images/bitcoin.png
-
-# 复制代码块
-codeblock:
-  copy_button:
-    enable: false
-  # Available values: default | flat | mac
-  style:
 ```
 
 ### tags
