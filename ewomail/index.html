@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lx0427.github.io","root":"/","scheme":"Gemini","version":"8.0.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="dns 配置   类型 名称 值 TTL    A @ 118.27.9.229 600 秒   A mail 118.27.9.229 600 秒   CNAME imap mail.gamermart.jp 600 秒   CNAME pop mail.gamermart.jp 600 秒   CNAME pop3 mail.gamermart.jp 600 秒   CNAME smtp ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ewomail">
+<meta property="og:url" content="https://lx0427.github.io/ewomail/index.html">
+<meta property="og:site_name" content="Little Flying Bears">
+<meta property="og:description" content="dns 配置   类型 名称 值 TTL    A @ 118.27.9.229 600 秒   A mail 118.27.9.229 600 秒   CNAME imap mail.gamermart.jp 600 秒   CNAME pop mail.gamermart.jp 600 秒   CNAME pop3 mail.gamermart.jp 600 秒   CNAME smtp ma">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-06T13:11:29.000Z">
+<meta property="article:modified_time" content="2021-02-08T06:53:38.215Z">
+<meta property="article:author" content="lx0427">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="ewomail">
+<meta property="article:tag" content="bestwu&#x2F;ewomail">
+<meta property="article:tag" content="nodemailer">
+<meta property="article:tag" content="hostname">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lx0427.github.io/ewomail/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ewomail | Little Flying Bears</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Little Flying Bears</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个沉淀知识的地方</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#dns-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">dns 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E5%9F%BA%E7%A1%80%E4%BA%86%E8%A7%A3"><span class="nav-number">1.1.</span> <span class="nav-text">域名基础了解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spf-%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">spf 设置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#swap"><span class="nav-number">2.1.</span> <span class="nav-text">swap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hostname-%E8%AE%BE%E7%BD%AE%E4%B8%BA%E4%BD%A0%E7%9A%84%E5%9F%9F%E5%90%8D"><span class="nav-number">2.2.</span> <span class="nav-text">hostname 设置为你的域名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-%E6%90%AD%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">docker 搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10024-%E9%94%99%E8%AF%AF"><span class="nav-number">3.1.</span> <span class="nav-text">10024 错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DKIM-%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.2.</span> <span class="nav-text">DKIM 设置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%9C%B0%E5%9D%80"><span class="nav-number">4.</span> <span class="nav-text">访问地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nodemailer-%E8%BF%9E%E6%8E%A5"><span class="nav-number">5.</span> <span class="nav-text">nodemailer 连接</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">lx0427</p>
+  <div class="site-description" itemprop="description">世界很大，什么都得试试</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lx0427" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lx0427" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lx0427.github.io/ewomail/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="lx0427">
+      <meta itemprop="description" content="世界很大，什么都得试试">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Little Flying Bears">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ewomail
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-06 21:11:29" itemprop="dateCreated datePublished" datetime="2020-11-06T21:11:29+08:00">2020-11-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-02-08 14:53:38" itemprop="dateModified" datetime="2021-02-08T14:53:38+08:00">2021-02-08</time>
+      </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ewomail/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ewomail/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="dns-配置"><a href="#dns-配置" class="headerlink" title="dns 配置"></a>dns 配置</h2><table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="center">名称</th>
+<th align="center">值</th>
+<th align="center">TTL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">A</td>
+<td align="center">@</td>
+<td align="center">118.27.9.229</td>
+<td align="center">600 秒</td>
+</tr>
+<tr>
+<td align="center">A</td>
+<td align="center">mail</td>
+<td align="center">118.27.9.229</td>
+<td align="center">600 秒</td>
+</tr>
+<tr>
+<td align="center">CNAME</td>
+<td align="center">imap</td>
+<td align="center">mail.gamermart.jp</td>
+<td align="center">600 秒</td>
+</tr>
+<tr>
+<td align="center">CNAME</td>
+<td align="center">pop</td>
+<td align="center">mail.gamermart.jp</td>
+<td align="center">600 秒</td>
+</tr>
+<tr>
+<td align="center">CNAME</td>
+<td align="center">pop3</td>
+<td align="center">mail.gamermart.jp</td>
+<td align="center">600 秒</td>
+</tr>
+<tr>
+<td align="center">CNAME</td>
+<td align="center">smtp</td>
+<td align="center">mail.gamermart.jp</td>
+<td align="center">600 秒</td>
+</tr>
+<tr>
+<td align="center">MX</td>
+<td align="center">gamermart.jp</td>
+<td align="center">mail.gamermart.jp(优先:1)</td>
+<td align="center">600 秒</td>
+</tr>
+</tbody></table>
+<h3 id="域名基础了解"><a href="#域名基础了解" class="headerlink" title="域名基础了解"></a>域名基础了解</h3><ul>
+<li>A: 主机记录</li>
+<li>MX: 邮件交换记录</li>
+<li>CNAME: 别名</li>
+</ul>
+<h3 id="spf-设置"><a href="#spf-设置" class="headerlink" title="spf 设置"></a>spf 设置</h3><blockquote>
+<p>如果除了邮件服务器，网站也可能直接发邮件，也可能通过中继服务器发邮件</p>
+</blockquote>
+<p>| TXT | @ | v=spf1 a mx ip4:118.27.9.229 ip4:118.27.9.229 ~all | 600 秒 |</p>
+<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><h3 id="swap"><a href="#swap" class="headerlink" title="swap"></a>swap</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看swap</span></span><br><span class="line">free -m</span><br></pre></td></tr></table></figure>
+
+<h3 id="hostname-设置为你的域名"><a href="#hostname-设置为你的域名" class="headerlink" title="hostname 设置为你的域名"></a>hostname 设置为你的域名</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hostname mail.gamermart.jp</span><br><span class="line">hostnamectl set-hostname mail.gamermart.jp</span><br></pre></td></tr></table></figure>
+
+<h2 id="docker-搭建"><a href="#docker-搭建" class="headerlink" title="docker 搭建"></a>docker 搭建</h2><p><a target="_blank" rel="noopener" href="https://hub.docker.com/r/bestwu/ewomail/">docker bestwu/ewomail 文档</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拉取镜像</span></span><br><span class="line">docker pull bestwu/ewomail</span><br><span class="line"><span class="comment"># 创建本地映射目录</span></span><br><span class="line">mkdir -p /home/ewomail/&#123;mysql,vmail,rainloop&#125;</span><br><span class="line">mkdir -p /home/ewomail/ssl/&#123;certs,private,dkim&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># mail.gamermart.jp 更换为自己的域名</span></span><br><span class="line"> docker run  -d -h mail.gamermart.jp --restart=always \</span><br><span class="line">  -p 25:25 \</span><br><span class="line">  -p 109:109 \</span><br><span class="line">  -p 110:110 \</span><br><span class="line">  -p 143:143 \</span><br><span class="line">  -p 465:465 \</span><br><span class="line">  -p 587:587 \</span><br><span class="line">  -p 993:993 \</span><br><span class="line">  -p 995:995  \</span><br><span class="line">  -p 8000:80 \</span><br><span class="line">  -p 8080:8080 \</span><br><span class="line">  -v /home/ewomail/mysql/:/ewomail/mysql/data/ \</span><br><span class="line">  -v /home/ewomail/vmail/:/ewomail/mail/ \</span><br><span class="line">  -v /home/ewomail/ssl/certs/:/etc/ssl/certs/ \</span><br><span class="line">  -v /home/ewomail/ssl/private/:/etc/ssl/private/ \</span><br><span class="line">  -v /home/ewomail/rainloop:/ewomail/www/rainloop/data \</span><br><span class="line">  -v /home/ewomail/ssl/dkim/:/ewomail/dkim/ \</span><br><span class="line">  --name ewomail bestwu/ewomail</span><br></pre></td></tr></table></figure>
+
+<h3 id="10024-错误"><a href="#10024-错误" class="headerlink" title="10024 错误"></a>10024 错误</h3><p>错误原因：10024 端口跑的服务主要用于 ewomail 中反垃圾反病毒作用，然而 docker 镜像中没有集成，所以会无法接收到邮件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br><span class="line">vi /etc/postfix/main.cf</span><br><span class="line">:737</span><br><span class="line"><span class="comment"># 注释 content_filter = smtp-amavis:[127.0.0.1]:10024</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="DKIM-设置"><a href="#DKIM-设置" class="headerlink" title="DKIM 设置"></a>DKIM 设置</h3><blockquote>
+<p>DKIM 是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个 dkim 的 key，EwoMail 默认安装后已自动添加主域名 dkim，只需要设置好 dkim 的 dns 即可。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br><span class="line"><span class="comment"># ; key#1, domain gamermart.jp, /ewomail/dkim/mail.pem</span></span><br><span class="line"><span class="comment"># dkim._domainkey.gamermart.jp.	3600 TXT (</span></span><br><span class="line"><span class="comment">#   &quot;v=DKIM1; p=&quot;</span></span><br><span class="line"><span class="comment">#   &quot;MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDB33JFXj3+sJ/TSM0ZbvRqYKgO&quot;</span></span><br><span class="line"><span class="comment">#   &quot;pOYnxHXj5/9I2m/lM4tU0PmPj7j5vQOd8+2VYUu5YwAh4EAABVD1kml7lqk0cP7b&quot;</span></span><br><span class="line"><span class="comment">#   &quot;OoP0wJHc0csAXevjIj9Z0uEhdrf96LTsPU1KwWk3YToF+iZjrQoG2BULnE8ql2HT&quot;</span></span><br><span class="line"><span class="comment">#   &quot;rY1T3PhSIkc1K1F9+wIDAQAB&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>将内容拷贝至<a target="_blank" rel="noopener" href="https://www.osyum.com/EwoMail/">DKIM 整理</a></p>
+</blockquote>
+<p>| TXT | <code>dkim._domainkey</code> | v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDB33JFXj3+sJ/TSM0ZbvRqYKgOpOYnxHXj5/9I2m/lM4tU0PmPj7j5vQOd8+2VYUu5YwAh4EAABVD1kml7lqk0cP7bOoP0wJHc0csAXevjIj9Z0uEhdrf96LTsPU1KwWk3YToF+iZjrQoG2BULnE8ql2HTrY1T3PhSIkc1K1F9+wIDAQAB | 600 秒 |</p>
+<blockquote>
+<p>十分钟后验证生效</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd testkeys</span><br><span class="line"><span class="comment"># TESTING#1: dkim._domainkey.gamermart.jp      =&gt; pass</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="访问地址"><a href="#访问地址" class="headerlink" title="访问地址"></a>访问地址</h2><p><a target="_blank" rel="noopener" href="http://doc.ewomail.com/docs/ewomail/jianjie">ewomail 官方文档</a></p>
+<blockquote>
+<p>邮件管理后台</p>
+</blockquote>
+<ul>
+<li>地址：<a target="_blank" rel="noopener" href="http://gamermart.jp:8080/">http://gamermart.jp:8080</a></li>
+<li>账号密码：admin/ewomail123</li>
+<li>添加邮箱密码，即可登录用户邮件平台</li>
+</ul>
+<blockquote>
+<p>Rainloop 管理端</p>
+</blockquote>
+<ul>
+<li>地址：<a target="_blank" rel="noopener" href="http://gamermart.jp:8000/?admin">http://gamermart.jp:8000/?admin</a></li>
+<li>账号密码：admin/12345</li>
+</ul>
+<blockquote>
+<p>用户邮件平台</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="http://gamermart.jp:8000/">http://gamermart.jp:8000</a></p>
+<h2 id="nodemailer-连接"><a href="#nodemailer-连接" class="headerlink" title="nodemailer 连接"></a>nodemailer 连接</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="title">sendMail</span>(<span class="params">title, content, toMail</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> emailOptions = &#123;</span><br><span class="line">    host: <span class="string">&#x27;mail.gamermart.jp&#x27;</span>,</span><br><span class="line">    port: <span class="number">25</span>,</span><br><span class="line">    secure: <span class="literal">false</span>, <span class="comment">// use SSL 465  //no use 587</span></span><br><span class="line">    auth: &#123;</span><br><span class="line">      user: <span class="string">&#x27;root@gamermart.jp&#x27;</span>, <span class="comment">// user name</span></span><br><span class="line">      pass: <span class="string">&#x27;12345678&#x27;</span>, <span class="comment">// password</span></span><br><span class="line">    &#125;,</span><br><span class="line">    tls: &#123;</span><br><span class="line">      rejectUnauthorized: <span class="literal">false</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> transporter = nodemailer.createTransport(emailOptions)</span><br><span class="line">  <span class="keyword">const</span> mailOptions = &#123;</span><br><span class="line">    <span class="keyword">from</span>: <span class="string">`&quot;GamerMart&quot;&lt;<span class="subst">$&#123;emailOptions.auth.user&#125;</span>&gt;`</span>, <span class="comment">// sender address mailfrom must be same with the user</span></span><br><span class="line">    to: toMail, <span class="comment">// list of receivers</span></span><br><span class="line">    subject: title, <span class="comment">// Subject line</span></span><br><span class="line">    text: content, <span class="comment">// plaintext body</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 用回调函数记录状态</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">send</span>(<span class="params">mailOptions</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="keyword">async</span> (resolve, reject) =&gt; &#123;</span><br><span class="line">      <span class="keyword">await</span> transporter.sendMail(mailOptions, <span class="function"><span class="keyword">function</span> (<span class="params">error, info</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (error) &#123;</span><br><span class="line">          reject(error)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          transporter.close()</span><br><span class="line">          resolve(&#123; <span class="attr">code</span>: <span class="number">1</span>, <span class="attr">data</span>: info &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> send(mailOptions)</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="keyword">throw</span> (<span class="number">500</span>, error)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="lx0427 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="lx0427 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/ewomail/" rel="tag"># ewomail</a>
+              <a href="/tags/bestwu-ewomail/" rel="tag"># bestwu/ewomail</a>
+              <a href="/tags/nodemailer/" rel="tag"># nodemailer</a>
+              <a href="/tags/hostname/" rel="tag"># hostname</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/hexo/" rel="prev" title="hexo">
+                  <i class="fa fa-chevron-left"></i> hexo
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/line/" rel="next" title="line">
+                  line <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lx0427</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"XkDAbvFcnXugtkXyVCUF3Bcb-gzGzoHsz","appKey":"UMru31u3af0ELnibVJqnk93C","serverURLs":"https://avoscloud.com","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":false,"enableQQ":false,"requiredFields":[]}, {
+      el: '#valine-comments',
+      path: "/ewomail/",
+      serverURLs: "https://avoscloud.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

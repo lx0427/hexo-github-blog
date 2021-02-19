@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lx0427.github.io","root":"/","scheme":"Gemini","version":"8.0.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="服务器连接 ip: 118.27.9.229 port: 22 username: root method: Public Key  node 最新版环境安装12345678910111213141516wget https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v12.19.0&#x2F;node-v12.19.0-linux-x64.tar.xztar xf node-v12.19.0-linux-x64">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker 项目部署">
+<meta property="og:url" content="https://lx0427.github.io/docker-deploy/index.html">
+<meta property="og:site_name" content="Little Flying Bears">
+<meta property="og:description" content="服务器连接 ip: 118.27.9.229 port: 22 username: root method: Public Key  node 最新版环境安装12345678910111213141516wget https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v12.19.0&#x2F;node-v12.19.0-linux-x64.tar.xztar xf node-v12.19.0-linux-x64">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-01T10:01:00.000Z">
+<meta property="article:modified_time" content="2021-02-08T06:46:12.072Z">
+<meta property="article:author" content="lx0427">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="docker-compose">
+<meta property="article:tag" content="mongodb 副本集">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="pm2">
+<meta property="article:tag" content="node">
+<meta property="article:tag" content="linux 开机自启动">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lx0427.github.io/docker-deploy/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>docker 项目部署 | Little Flying Bears</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Little Flying Bears</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个沉淀知识的地方</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.</span> <span class="nav-text">服务器连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#node-%E6%9C%80%E6%96%B0%E7%89%88%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">node 最新版环境安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-%E7%8E%AF%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">docker 环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-%E7%8E%AF%E5%A2%83"><span class="nav-number">4.</span> <span class="nav-text">docker-compose 环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%8E%AF%E5%A2%83"><span class="nav-number">5.</span> <span class="nav-text">其他环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81"><span class="nav-number">6.</span> <span class="nav-text">项目代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">7.</span> <span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">配置管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mongodb-key"><span class="nav-number">8.1.</span> <span class="nav-text">mongodb.key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redis-conf"><span class="nav-number">8.2.</span> <span class="nav-text">redis.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx-conf"><span class="nav-number">8.3.</span> <span class="nav-text">nginx.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-compose-yml"><span class="nav-number">8.4.</span> <span class="nav-text">docker-compose.yml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%E9%9B%86"><span class="nav-number">9.</span> <span class="nav-text">副本集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%89%AF%E6%9C%AC%E9%9B%86"><span class="nav-number">9.1.</span> <span class="nav-text">初始化副本集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">9.2.</span> <span class="nav-text">导入数据库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8"><span class="nav-number">10.</span> <span class="nav-text">服务启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="nav-number">11.</span> <span class="nav-text">docker-compose 自启动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#linux-%E8%87%AA%E5%90%AF%E5%8A%A8%E8%AE%BE%E7%BD%AE"><span class="nav-number">11.1.</span> <span class="nav-text">linux 自启动设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-compose-sh"><span class="nav-number">11.2.</span> <span class="nav-text">docker-compose.sh</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pm2"><span class="nav-number">12.</span> <span class="nav-text">pm2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%90%AF%E5%8A%A8%E8%AE%BE%E7%BD%AE"><span class="nav-number">12.1.</span> <span class="nav-text">自启动设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#server-js"><span class="nav-number">12.2.</span> <span class="nav-text">server.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pm2-config-js"><span class="nav-number">12.3.</span> <span class="nav-text">pm2.config.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">12.4.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pm2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">12.5.</span> <span class="nav-text">pm2 配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E8%AE%B0%E5%BD%95"><span class="nav-number">13.</span> <span class="nav-text">报错记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%96%87%E6%A1%A3%E4%BA%8B%E5%8A%A1%E6%8A%A5%E9%94%99"><span class="nav-number">13.1.</span> <span class="nav-text">多文档事务报错</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">lx0427</p>
+  <div class="site-description" itemprop="description">世界很大，什么都得试试</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lx0427" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lx0427" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lx0427.github.io/docker-deploy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="lx0427">
+      <meta itemprop="description" content="世界很大，什么都得试试">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Little Flying Bears">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          docker 项目部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-01 18:01:00" itemprop="dateCreated datePublished" datetime="2020-09-01T18:01:00+08:00">2020-09-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-02-08 14:46:12" itemprop="dateModified" datetime="2021-02-08T14:46:12+08:00">2021-02-08</time>
+      </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/docker-deploy/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/docker-deploy/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="服务器连接"><a href="#服务器连接" class="headerlink" title="服务器连接"></a>服务器连接</h2><ul>
+<li>ip: 118.27.9.229</li>
+<li>port: 22</li>
+<li>username: root</li>
+<li>method: Public Key</li>
+</ul>
+<h2 id="node-最新版环境安装"><a href="#node-最新版环境安装" class="headerlink" title="node 最新版环境安装"></a>node 最新版环境安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">wget https://nodejs.org/dist/v12.19.0/node-v12.19.0-linux-x64.tar.xz</span><br><span class="line">tar xf node-v12.19.0-linux-x64.tar.xz</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> node-v12.19.0-linux-x64/</span><br><span class="line"><span class="comment"># 备份</span></span><br><span class="line">cp /etc/profile /etc/profile.bak</span><br><span class="line">vim /etc/profile</span><br><span class="line"><span class="comment"># 最下方插入，</span></span><br><span class="line"><span class="built_in">export</span> PATH=\<span class="variable">$PATH</span>:/root/node-v12.19.0-linux-x64/bin</span><br><span class="line"><span class="comment"># 退出编辑</span></span><br><span class="line"><span class="comment"># 立即生效路径配置</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"></span><br><span class="line">npm i -g npm</span><br><span class="line"><span class="comment"># permission denied, mkdir &#x27;/root/gamemart/egg/node_modules/bcrypt/.node-gyp&#x27;</span></span><br><span class="line">npm -g config <span class="built_in">set</span> user root</span><br></pre></td></tr></table></figure>
+
+<h2 id="docker-环境"><a href="#docker-环境" class="headerlink" title="docker 环境"></a>docker 环境</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># requires containerd.io &gt;= 1.2.2-3, but none of the providers can be installed</span></span><br><span class="line">wget https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.13-3.1.el7.x86_64.rpm</span><br><span class="line">yum -y install ./containerd.io-1.2.13-3.1.el7.x86_64.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line">curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun</span><br><span class="line">docker -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动docker(重启自动启动)</span></span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="docker-compose-环境"><a href="#docker-compose-环境" class="headerlink" title="docker-compose 环境"></a>docker-compose 环境</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">sudo curl -L <span class="string">&quot;https://github.com/docker/compose/releases/download/1.27.4/docker-compose-<span class="subst">$(uname -s)</span>-<span class="subst">$(uname -m)</span>&quot;</span> -o /usr/<span class="built_in">local</span>/bin/docker-compose</span><br><span class="line"></span><br><span class="line"><span class="comment"># /usr/local/bin/docker-compose: Permission denied</span></span><br><span class="line">chmod +x /usr/<span class="built_in">local</span>/bin/docker-compose</span><br><span class="line"></span><br><span class="line">docker-compose -v</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他环境"><a href="#其他环境" class="headerlink" title="其他环境"></a>其他环境</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull nginx:latest</span><br><span class="line">docker pull redis:latest</span><br><span class="line">docker pull mongo:latest</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目代码"><a href="#项目代码" class="headerlink" title="项目代码"></a>项目代码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /root/gamemart</span><br><span class="line"><span class="built_in">cd</span> /root/gamemart/</span><br><span class="line">mkdir admin</span><br><span class="line">mkdir egg</span><br><span class="line">mkdir mobile</span><br><span class="line"><span class="comment"># /root/gamemart/</span></span><br><span class="line"><span class="comment"># ├── admin</span></span><br><span class="line"><span class="comment"># ├── egg</span></span><br><span class="line"><span class="comment"># └── mobile</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传项目代码</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /data/gamemart</span><br><span class="line"><span class="comment"># /data/gamemart</span></span><br><span class="line"><span class="comment"># ├── docker-compose.yml</span></span><br><span class="line"><span class="comment"># ├── mongodb.key</span></span><br><span class="line"><span class="comment"># ├── nginx</span></span><br><span class="line"><span class="comment"># │   ├── admin</span></span><br><span class="line"><span class="comment"># │   │   └── nginx.conf</span></span><br><span class="line"><span class="comment"># │   ├── mobile</span></span><br><span class="line"><span class="comment"># │   │   └── nginx.conf</span></span><br><span class="line"><span class="comment"># └── redis</span></span><br><span class="line"><span class="comment">#     └── redis.conf</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置管理"><a href="#配置管理" class="headerlink" title="配置管理"></a>配置管理</h2><h3 id="mongodb-key"><a href="#mongodb-key" class="headerlink" title="mongodb.key"></a>mongodb.key</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建秘钥 mongodb.key</span></span><br><span class="line">openssl rand -base64 756 &gt; mongodb.key</span><br><span class="line">chmod 400 mongodb.key</span><br></pre></td></tr></table></figure>
+
+<h3 id="redis-conf"><a href="#redis-conf" class="headerlink" title="redis.conf"></a>redis.conf</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">requirepass 123456</span><br><span class="line">#daemonize yes</span><br><span class="line">bind 0.0.0.0</span><br><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
+
+<h3 id="nginx-conf"><a href="#nginx-conf" class="headerlink" title="nginx.conf"></a>nginx.conf</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#user  nginx;</span><br><span class="line">worker_processes  1;</span><br><span class="line">error_log  &#x2F;var&#x2F;log&#x2F;nginx&#x2F;error.log warn;</span><br><span class="line">pid        &#x2F;var&#x2F;run&#x2F;nginx.pid;</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    include       &#x2F;etc&#x2F;nginx&#x2F;mime.types;</span><br><span class="line">    default_type  application&#x2F;octet-stream;</span><br><span class="line">    log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;</span><br><span class="line">                      &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;</span><br><span class="line">                      &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;</span><br><span class="line">    access_log  &#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log  main;</span><br><span class="line">    client_max_body_size 10m;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line">    #gzip  on;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen       8081;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">        root         &#x2F;webserver;</span><br><span class="line">        location &#x2F; &#123;</span><br><span class="line">            try_files $uri $uri&#x2F; &#x2F;index.html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        location @router &#123;</span><br><span class="line">          rewrite ^.*$ &#x2F;index.html last;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    include &#x2F;etc&#x2F;nginx&#x2F;conf.d&#x2F;*.conf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.13&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">gamemart_redis:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">gamemart_redis</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">6379</span><span class="string">:6379</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./redis/redis.conf:/etc/redis/redis.conf:rw</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./redis/data:/data:rw</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">redis-server</span> <span class="string">/etc/redis/redis.conf</span> <span class="string">--appendonly</span> <span class="literal">yes</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">admin:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">admin</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8081</span><span class="string">:8081</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/gamemart/admin:/webserver</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./nginx/admin/nginx.conf:/etc/nginx/nginx.conf</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./nginx/admin/log:/var/log/nginx</span></span><br><span class="line">  <span class="attr">mobile:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mobile</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">80</span><span class="string">:80</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/gamemart/mobile:/webserver</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./nginx/mobile/nginx.conf:/etc/nginx/nginx.conf</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./nginx/mobile/log:/var/log/nginx</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">master:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">master</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./data/db/master:/data/db</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./data/backup:/data/backup</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mongodb.key:/data/mongodb.key</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">27001</span><span class="string">:27017</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_USERNAME:</span> <span class="string">root</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_PASSWORD:</span> <span class="number">123456</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongoNet</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">mongod</span> <span class="string">--replSet</span> <span class="string">rs</span> <span class="string">--keyFile</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">    <span class="attr">entrypoint:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">bash</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">|</span></span><br><span class="line">        <span class="string">chmod</span> <span class="number">400</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">        <span class="string">chown</span> <span class="number">999</span><span class="string">:999</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">        <span class="string">exec</span> <span class="string">docker-entrypoint.sh</span> <span class="string">$$@</span></span><br><span class="line">  <span class="attr">secondary:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">secondary</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./data/db/secondary:/data/db</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mongodb.key:/data/mongodb.key</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">27002</span><span class="string">:27017</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_USERNAME:</span> <span class="string">root</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_PASSWORD:</span> <span class="number">123456</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongoNet</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">mongod</span> <span class="string">--replSet</span> <span class="string">rs</span> <span class="string">--keyFile</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">    <span class="attr">entrypoint:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">bash</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">|</span></span><br><span class="line">        <span class="string">chmod</span> <span class="number">400</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">        <span class="string">chown</span> <span class="number">999</span><span class="string">:999</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">        <span class="string">exec</span> <span class="string">docker-entrypoint.sh</span> <span class="string">$$@</span></span><br><span class="line">  <span class="attr">arbiter:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">arbiter</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./data/db/arbiter:/data/db</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mongodb.key:/data/mongodb.key</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">27003</span><span class="string">:27017</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_USERNAME:</span> <span class="string">root</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_PASSWORD:</span> <span class="number">123456</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongoNet</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">mongod</span> <span class="string">--replSet</span> <span class="string">rs</span> <span class="string">--keyFile</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">    <span class="attr">entrypoint:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">bash</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">|</span></span><br><span class="line">        <span class="string">chmod</span> <span class="number">400</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">        <span class="string">chown</span> <span class="number">999</span><span class="string">:999</span> <span class="string">/data/mongodb.key</span></span><br><span class="line">        <span class="string">exec</span> <span class="string">docker-entrypoint.sh</span> <span class="string">$$@</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">mongoNet:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="副本集"><a href="#副本集" class="headerlink" title="副本集"></a>副本集</h2><h3 id="初始化副本集"><a href="#初始化副本集" class="headerlink" title="初始化副本集"></a>初始化副本集</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动docker-compose</span></span><br><span class="line">docker-compose up -d</span><br><span class="line"><span class="comment"># 关闭防火墙</span></span><br><span class="line"><span class="comment"># &quot;errmsg&quot; : &quot;No host described in new configuration with &#123;version: 1, term: 0&#125; for replica set rs maps to this node&quot;</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line"><span class="comment"># 进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it master /bin/bash</span><br><span class="line"><span class="comment"># 连接数据库</span></span><br><span class="line">mongo -uroot -p123456</span><br><span class="line"><span class="comment"># 初始化副本集</span></span><br><span class="line">rs.initiate(&#123; _id: <span class="string">&quot;rs&quot;</span>, members: [&#123; _id: 0, host: <span class="string">&quot;118.27.9.229:27001&quot;</span>, priority:2 &#125;,&#123; _id: 1, host: <span class="string">&quot;118.27.9.229:27002&quot;</span>, priority:1 &#125;,&#123; _id: 2, host: <span class="string">&quot;118.27.9.229:27003&quot;</span>, arbiterOnly:<span class="literal">true</span> &#125;]&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="导入数据库"><a href="#导入数据库" class="headerlink" title="导入数据库"></a>导入数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导出本地数据库</span></span><br><span class="line">mongodump -h localhost:27117 -uadmin -p123456 -d game_mall --authenticationDatabase admin -o D:\MongoDB\bin\dump</span><br><span class="line"><span class="comment"># 将数据库文件传入 /data/backup/game_mall</span></span><br><span class="line"><span class="comment"># 进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it master /bin/bash</span><br><span class="line"><span class="comment"># 执行导入</span></span><br><span class="line">mongorestore -h 118.27.9.229:27001 -uroot -p123456 --authenticationDatabase admin -d game_mall --dir /data/backup/game_mall</span><br></pre></td></tr></table></figure>
+
+<h2 id="服务启动"><a href="#服务启动" class="headerlink" title="服务启动"></a>服务启动</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># docker-compose 启动</span></span><br><span class="line"><span class="built_in">cd</span> /data/gamemart</span><br><span class="line">docker-compose up -d</span><br><span class="line"><span class="comment"># ERROR: Failed to Setup IP tables: Unable to enable SKIP DNAT rule</span></span><br><span class="line"><span class="comment"># 关闭防火墙之后, docker需要重启</span></span><br><span class="line">service docker restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># egg 启动</span></span><br><span class="line"><span class="built_in">cd</span> /root/gamemart/egg</span><br><span class="line">yarn start</span><br></pre></td></tr></table></figure>
+
+<h2 id="docker-compose-自启动"><a href="#docker-compose-自启动" class="headerlink" title="docker-compose 自启动"></a>docker-compose 自启动</h2><h3 id="linux-自启动设置"><a href="#linux-自启动设置" class="headerlink" title="linux 自启动设置"></a>linux 自启动设置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑开机自启动脚本</span></span><br><span class="line">vim /etc/rc.d/init.d/docker-compose.sh</span><br><span class="line"><span class="comment"># 授权</span></span><br><span class="line">chmod +x /etc/rc.d/init.d/docker-compose.sh</span><br><span class="line"><span class="comment"># 开机自启动</span></span><br><span class="line">chkconfig docker-compose.sh on</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开机自启动docker</span></span><br><span class="line">systemctl <span class="built_in">enable</span> docker</span><br><span class="line"><span class="comment"># 服务器重启</span></span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<h3 id="docker-compose-sh"><a href="#docker-compose-sh" class="headerlink" title="docker-compose.sh"></a><code>docker-compose.sh</code></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># chkconfig: 2345 85 15</span></span><br><span class="line"><span class="comment"># description: docker-compose init start</span></span><br><span class="line"></span><br><span class="line">systemctl stop firewalld</span><br><span class="line">/usr/<span class="built_in">local</span>/bin/docker-compose -f /data/gamemart/docker-compose.yml up -d</span><br></pre></td></tr></table></figure>
+
+<h2 id="pm2"><a href="#pm2" class="headerlink" title="pm2"></a>pm2</h2><h3 id="自启动设置"><a href="#自启动设置" class="headerlink" title="自启动设置"></a>自启动设置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pm2 start pm2.config.js --env production</span><br><span class="line"><span class="comment"># 保存当前应用列表</span></span><br><span class="line">pm2 save</span><br><span class="line"><span class="comment"># 创建开机自启动命令</span></span><br><span class="line">pm2 startup</span><br><span class="line"><span class="comment"># 重启，发现之前的服务都已经启动</span></span><br><span class="line">sudo systemctl reboot</span><br><span class="line"><span class="comment"># 删除自动启动服务</span></span><br><span class="line">sudo pm2 unstartup systemd</span><br></pre></td></tr></table></figure>
+
+<h3 id="server-js"><a href="#server-js" class="headerlink" title="server.js"></a>server.js</h3><blockquote>
+<p>egg 项目使用 pm2 启动文件</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> egg = <span class="built_in">require</span>(<span class="string">&#x27;egg&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> workers = <span class="built_in">Number</span>(process.argv[<span class="number">2</span>] || <span class="built_in">require</span>(<span class="string">&#x27;os&#x27;</span>).cpus().length)</span><br><span class="line">egg.startCluster(&#123;</span><br><span class="line">  workers,</span><br><span class="line">  baseDir: __dirname,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="pm2-config-js"><a href="#pm2-config-js" class="headerlink" title="pm2.config.js"></a>pm2.config.js</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  apps: [</span><br><span class="line">    &#123;</span><br><span class="line">      name: <span class="string">&#x27;gamermart-egg&#x27;</span>,</span><br><span class="line">      script: <span class="string">&#x27;./server.js&#x27;</span>,</span><br><span class="line">      watch: <span class="literal">false</span>,</span><br><span class="line">      env: &#123;</span><br><span class="line">        PORT: <span class="number">7001</span>,</span><br><span class="line">        NODE_ENV: <span class="string">&#x27;development&#x27;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      env_production: &#123;</span><br><span class="line">        PORT: <span class="number">7001</span>,</span><br><span class="line">        NODE_ENV: <span class="string">&#x27;production&#x27;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><p><a target="_blank" rel="noopener" href="https://pm2.keymetrics.io/docs/usage/quick-start/">pm2 官方文档</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pm2 start app.js --watch      <span class="comment"># 当文件变化时自动重启应用，大量更新文件时会频繁触发重启</span></span><br><span class="line"></span><br><span class="line">pm2 ls                      <span class="comment"># 即 pm2 list , 列表 PM2 启动的所有的应用程序</span></span><br><span class="line"></span><br><span class="line">pm2 monit                    <span class="comment"># 显示每个应用程序的CPU和内存占用情况</span></span><br><span class="line"></span><br><span class="line">pm2 show [app-name]          <span class="comment"># 显示应用程序的所有信息</span></span><br><span class="line"></span><br><span class="line">pm2 logs                      <span class="comment"># 显示所有应用程序的日志</span></span><br><span class="line"></span><br><span class="line">pm2 stop [app-name]            <span class="comment"># 停止指定应用程序</span></span><br><span class="line"></span><br><span class="line">pm2 restart [app-name]        <span class="comment"># 重启指定应用程序</span></span><br><span class="line"></span><br><span class="line">pm2 delete [app-name]          <span class="comment"># 关闭并删除指定应用程序</span></span><br><span class="line"></span><br><span class="line">pm2 flush                       <span class="comment"># 清空所有日志文件</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="pm2-配置文件"><a href="#pm2-配置文件" class="headerlink" title="pm2 配置文件"></a>pm2 配置文件</h3><p><a target="_blank" rel="noopener" href="https://pm2.keymetrics.io/docs/usage/application-declaration/#attributes-available">官方文档</a></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> day = <span class="built_in">require</span>(<span class="string">&#x27;dayjs&#x27;</span>)</span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  apps: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// 项目名</span></span><br><span class="line">      name: <span class="string">&#x27;server&#x27;</span>,</span><br><span class="line">      <span class="comment">// 执行文件</span></span><br><span class="line">      script: <span class="string">&#x27;./server.js&#x27;</span>,</span><br><span class="line">      <span class="comment">// 根目录</span></span><br><span class="line">      cwd: <span class="string">&#x27;./&#x27;</span>,</span><br><span class="line">      <span class="comment">// 传递给脚本的参数</span></span><br><span class="line">      args: <span class="string">&#x27;one two&#x27;</span>,</span><br><span class="line">      <span class="comment">// 指定的脚本解释器</span></span><br><span class="line">      interpreter: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="comment">// 传递给解释器的参数</span></span><br><span class="line">      interpreter_args: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="comment">// 应用启动模式，支持fork和cluster模式</span></span><br><span class="line">      exec_mode: <span class="string">&#x27;cluster_mode&#x27;</span>,</span><br><span class="line">      <span class="comment">// 应用启动实例个数，仅在cluster模式有效 默认为fork；或者 max</span></span><br><span class="line">      instances: <span class="number">1</span>,</span><br><span class="line">      <span class="comment">// 最大内存限制数，超出自动重启</span></span><br><span class="line">      max_memory_restart: <span class="string">&#x27;1G&#x27;</span>,</span><br><span class="line">      <span class="comment">// 错误日志文件</span></span><br><span class="line">      error_file: <span class="string">`./logs/pm2/<span class="subst">$&#123;day().format(<span class="string">&#x27;YYYYMMDD&#x27;</span>)&#125;</span>/app-err.log`</span>,</span><br><span class="line">      <span class="comment">// 正常日志文件</span></span><br><span class="line">      out_file: <span class="string">`./logs/pm2/<span class="subst">$&#123;day().format(<span class="string">&#x27;YYYYMMDD&#x27;</span>)&#125;</span>/app-out.log`</span>,</span><br><span class="line">      <span class="comment">// 设置追加日志而不是新建日志</span></span><br><span class="line">      merge_logs: <span class="literal">true</span>,</span><br><span class="line">      <span class="comment">// 指定日志文件的时间格式</span></span><br><span class="line">      log_date_format: <span class="string">&#x27;YYYY-MM-DD HH:mm:ss&#x27;</span>,</span><br><span class="line">      <span class="comment">// 应用运行少于时间被认为是异常启动</span></span><br><span class="line">      min_uptime: <span class="number">1000</span>,</span><br><span class="line">      <span class="comment">// 最大异常重启次数，即小于min_uptime运行时间重启次数；</span></span><br><span class="line">      max_restarts: <span class="number">30</span>,</span><br><span class="line">      <span class="comment">// 默认为true, 发生异常的情况下自动重启</span></span><br><span class="line">      autorestart: <span class="literal">true</span>,</span><br><span class="line">      <span class="comment">// crontab时间格式重启应用，目前只支持cluster模式;</span></span><br><span class="line">      cron_restart: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="comment">// 异常重启情况下，延时重启时间</span></span><br><span class="line">      restart_delay: <span class="number">60</span>,</span><br><span class="line">      <span class="comment">// 是否监听文件变动然后重启</span></span><br><span class="line">      watch: <span class="literal">true</span>,</span><br><span class="line">      <span class="comment">// 不用监听的文件</span></span><br><span class="line">      ignore_watch: [<span class="string">&#x27;node_modules&#x27;</span>, <span class="string">&#x27;logs&#x27;</span>, <span class="string">&#x27;news&#x27;</span>, <span class="string">&#x27;run&#x27;</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;typings&#x27;</span>, <span class="string">&#x27;pm2.config&#x27;</span>],</span><br><span class="line">      env: &#123; <span class="attr">NODE_ENV</span>: <span class="string">&#x27;development&#x27;</span> &#125;,</span><br><span class="line">      env_production: &#123; <span class="attr">NODE_ENV</span>: <span class="string">&#x27;production&#x27;</span> &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="报错记录"><a href="#报错记录" class="headerlink" title="报错记录"></a>报错记录</h2><h3 id="多文档事务报错"><a href="#多文档事务报错" class="headerlink" title="多文档事务报错"></a>多文档事务报错</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 提前创建好集合</span></span><br><span class="line">db.order.insertOne(&#123; <span class="attr">_id</span>: <span class="string">&#x27;1&#x27;</span>, <span class="attr">price</span>: <span class="number">1</span> &#125;)</span><br><span class="line">db.log_order_status.insertOne(&#123; <span class="attr">ip</span>: <span class="string">&#x27;1&#x27;</span> &#125;)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="lx0427 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="lx0427 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/docker-compose/" rel="tag"># docker-compose</a>
+              <a href="/tags/mongodb-%E5%89%AF%E6%9C%AC%E9%9B%86/" rel="tag"># mongodb 副本集</a>
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+              <a href="/tags/redis/" rel="tag"># redis</a>
+              <a href="/tags/pm2/" rel="tag"># pm2</a>
+              <a href="/tags/node/" rel="tag"># node</a>
+              <a href="/tags/linux-%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8/" rel="tag"># linux 开机自启动</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/hexo/" rel="next" title="hexo">
+                  hexo <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lx0427</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"XkDAbvFcnXugtkXyVCUF3Bcb-gzGzoHsz","appKey":"UMru31u3af0ELnibVJqnk93C","serverURLs":"https://avoscloud.com","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":false,"enableQQ":false,"requiredFields":[]}, {
+      el: '#valine-comments',
+      path: "/docker-deploy/",
+      serverURLs: "https://avoscloud.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
