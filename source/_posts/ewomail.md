@@ -2,18 +2,19 @@
 title: ewomail
 date: 2020-11-06 21:11:29
 tags:
-- ewomail
-- docker
-- bestwu/ewomail
-- nodemailer
-- hostname
+  - ewomail
+  - docker
+  - bestwu/ewomail
+  - nodemailer
+  - hostname
 ---
+
 ## dns 配置
 
 | 类型  |     名称     |            值             |  TTL   |
 | :---: | :----------: | :-----------------------: | :----: |
-|   A   |      @       |      160.251.21.249       | 600 秒 |
-|   A   |     mail     |      160.251.21.249       | 600 秒 |
+|   A   |      @       |       118.27.9.229        | 600 秒 |
+|   A   |     mail     |       118.27.9.229        | 600 秒 |
 | CNAME |     imap     |     mail.gamermart.jp     | 600 秒 |
 | CNAME |     pop      |     mail.gamermart.jp     | 600 秒 |
 | CNAME |     pop3     |     mail.gamermart.jp     | 600 秒 |
@@ -30,7 +31,7 @@ tags:
 
 > 如果除了邮件服务器，网站也可能直接发邮件，也可能通过中继服务器发邮件
 
-| TXT | @ | v=spf1 a mx ip4:160.251.21.249 ip4:160.251.21.249 ~all | 600 秒 |
+| TXT | @ | v=spf1 a mx ip4:118.27.9.229 ip4:118.27.9.229 ~all | 600 秒 |
 
 ## 服务器
 
@@ -60,17 +61,24 @@ mkdir -p /home/ewomail/{mysql,vmail,rainloop}
 mkdir -p /home/ewomail/ssl/{certs,private,dkim}
 
 # mail.gamermart.jp 更换为自己的域名
-docker run -p 81:81 -p 443:443 \
-           -h mail.gamermart.jp \
-           -e "MYSQL_ROOT_PASSWORD=123456" \
-           -e "SOGO_WORKERS=1" \
-           -e "TZ=Europe/Prague" \
-           -e "POSTMASTER_PASSWORD={PLAIN}123456" \
-           -e "IREDAPD_PLUGINS=['reject_null_sender', 'reject_sender_login_mismatch', 'greylisting', 'throttle', 'amavisd_wblist', 'sql_alias_access_policy']" \
-           -v /home/iredmail/mysql:/var/lib/mysql \
-           -v /home/iredmail/vmail:/var/vmail \
-           -v /home/iredmail/clamav:/var/lib/clamav \
-           --name=iredmail lejmr/iredmail:mysql-latest
+ docker run  -d -h mail.gamermart.jp --restart=always \
+  -p 25:25 \
+  -p 109:109 \
+  -p 110:110 \
+  -p 143:143 \
+  -p 465:465 \
+  -p 587:587 \
+  -p 993:993 \
+  -p 995:995  \
+  -p 8000:80 \
+  -p 8080:8080 \
+  -v /home/ewomail/mysql/:/ewomail/mysql/data/ \
+  -v /home/ewomail/vmail/:/ewomail/mail/ \
+  -v /home/ewomail/ssl/certs/:/etc/ssl/certs/ \
+  -v /home/ewomail/ssl/private/:/etc/ssl/private/ \
+  -v /home/ewomail/rainloop:/ewomail/www/rainloop/data \
+  -v /home/ewomail/ssl/dkim/:/ewomail/dkim/ \
+  --name ewomail bestwu/ewomail
 ```
 
 ### 10024 错误

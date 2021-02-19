@@ -2,19 +2,19 @@
 title: docker 项目部署
 date: 2020-09-01 18:01:00
 tags:
-- docker
-- docker-compose
-- mongodb 副本集
-- nginx
-- redis
-- pm2
-- node
-- linux 开机自启动
+  - docker
+  - docker-compose
+  - mongodb 副本集
+  - nginx
+  - redis
+  - pm2
+  - node
+  - linux 开机自启动
 ---
 
 ## 服务器连接
 
-- ip: 160.251.21.249
+- ip: 118.27.9.229
 - port: 22
 - username: root
 - method: Public Key
@@ -290,7 +290,7 @@ docker exec -it master /bin/bash
 # 连接数据库
 mongo -uroot -p123456
 # 初始化副本集
-rs.initiate({ _id: "rs", members: [{ _id: 0, host: "160.251.21.249:27001", priority:2 },{ _id: 1, host: "160.251.21.249:27002", priority:1 },{ _id: 2, host: "160.251.21.249:27003", arbiterOnly:true }]});
+rs.initiate({ _id: "rs", members: [{ _id: 0, host: "118.27.9.229:27001", priority:2 },{ _id: 1, host: "118.27.9.229:27002", priority:1 },{ _id: 2, host: "118.27.9.229:27003", arbiterOnly:true }]});
 ```
 
 ### 导入数据库
@@ -302,7 +302,7 @@ mongodump -h localhost:27117 -uadmin -p123456 -d game_mall --authenticationDatab
 # 进入容器
 docker exec -it master /bin/bash
 # 执行导入
-mongorestore -h 160.251.21.249:27001 -uroot -p123456 --authenticationDatabase admin -d game_mall --dir /data/backup/game_mall
+mongorestore -h 118.27.9.229:27001 -uroot -p123456 --authenticationDatabase admin -d game_mall --dir /data/backup/game_mall
 ```
 
 ## 服务启动
@@ -367,7 +367,7 @@ sudo pm2 unstartup systemd
 
 ### server.js
 
-> egg 项目使用pm2启动文件
+> egg 项目使用 pm2 启动文件
 
 ```js
 const egg = require('egg')
@@ -403,7 +403,7 @@ module.exports = {
 
 ### 常用命令
 
-[pm2官方文档](https://pm2.keymetrics.io/docs/usage/quick-start/)
+[pm2 官方文档](https://pm2.keymetrics.io/docs/usage/quick-start/)
 
 ```bash
 pm2 start app.js --watch      # 当文件变化时自动重启应用，大量更新文件时会频繁触发重启
